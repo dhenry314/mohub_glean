@@ -6,9 +6,15 @@ api = Api(app)
 
 from gleanomatic.configure import appConfig as config
 from services.HelloWorld import HelloWorld as hw
+from services.MODSMap import MODSMap as mm
 
 api.add_resource(hw,
                  "/HelloWorld/<string:fullName>",
+                 methods=['GET'],
+                 resource_class_kwargs={ 'config': config })
+                 
+api.add_resource(mm,
+                 "/MODSMap/<int:resID>",
                  methods=['GET'],
                  resource_class_kwargs={ 'config': config })
 

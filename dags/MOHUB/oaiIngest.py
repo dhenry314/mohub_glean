@@ -17,9 +17,10 @@ def oaiIngest(sourceNamespace,setNamespace):
 
 if __name__ == "__main__":
     sourceID = sys.argv[1]
-    if not "." in sourceID:
+    if not "/" in sourceID:
+        print("USAGE: oaiIngest.py {sourceNamespace}/{setNamespace}\n")
         raise Exception("Incorrect identifier format")
-    parts = sourceID.split(".")
+    parts = sourceID.split("/")
     sourceNamespace = parts[0]
     setNamespace = parts[1]
     result = oaiIngest(sourceNamespace,setNamespace)
