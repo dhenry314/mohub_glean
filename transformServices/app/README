@@ -1,0 +1,3 @@
+//before running this app
+// create a link to a gleanomatic library
+// e.g.:  %> sudo ln /var/lib/gleanomatic/gleanomatic .

@@ -7,6 +7,10 @@ api = Api(app)
 from gleanomatic.configure import appConfig as config
 from services.HelloWorld import HelloWorld as hw
 from services.MODSMap import MODSMap as mm
+from services.DCMap import DCMap as dm
+from services.StaticOAIDC import StaticOAIDC as soDC
+from services.StaticOAIMODS import StaticOAIMODS as soMODS
+from services.MimsyMap import MimsyMap as mimsy
 
 api.add_resource(hw,
                  "/HelloWorld/<string:fullName>",
@@ -15,6 +19,26 @@ api.add_resource(hw,
                  
 api.add_resource(mm,
                  "/MODSMap/<int:resID>",
+                 methods=['GET'],
+                 resource_class_kwargs={ 'config': config })
+                 
+api.add_resource(dm,
+                 "/DCMap/<int:resID>",
+                 methods=['GET'],
+                 resource_class_kwargs={ 'config': config })
+                 
+api.add_resource(soDC,
+                 "/StaticOAIDC/<int:resID>/DCMap/<string:identifier>",
+                 methods=['GET'],
+                 resource_class_kwargs={ 'config': config })
+                 
+api.add_resource(soMODS,
+                 "/StaticOAIMODS/<int:resID>/MODSMap/<string:identifier>",
+                 methods=['GET'],
+                 resource_class_kwargs={ 'config': config })
+                 
+api.add_resource(mimsy,
+                 "/MimsyMap/<int:resID>",
                  methods=['GET'],
                  resource_class_kwargs={ 'config': config })
 

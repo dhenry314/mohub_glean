@@ -1,18 +1,43 @@
-from services.OAIMap import OAIMap
+from gleanomatic import Utils
+from services.OAIBase import OAIBase, BadOAIRecord
+from services import MODSRecord as mods
+from services import OAIUtils
 
-class MODSMap(OAIMap):
+class BadMODSRecord(BadOAIRecord):
+    pass
 
-    modsRecord = None
+class MODSMap(OAIBase):
+
+    modsRecord = {}
+    resID = None
 
     def get(self,resID):
-        record = self.initRecord(resID)
+        self.resID = resID
+        record = self.initRecord()
+        metadataKey = 'mods'
+        if self.prefix:
+            metadataKey = str(self.prefix) + ":mods"
+        if not self.deleted:
+            try:
+                self.modsRecord = self.metadata[metadataKey]
+            except KeyError as e:
+                 try:
+                     self.modsRecord = self.metadata['mods']
+                 except KeyError as e:
+                     raise BadMODSRecord("No mods element found.",e,self.logger)
+            try:
+                self.modsRecord = OAIUtils.normalizeRecord(self.modsRecord,self.prefix)
+            except Exception as e:
+                raise BadMODSRecord("Could not normalize MODS record.",e,self.logger)
+        if self.metadata:
+            try:
+                self.resultRecord = mods.mapFromMODS(self.modsRecord,self.header,self.resultRecord)
+            except Exception as e:
+                raise BadMODSRecord("Could not create default MODS record.",e,self.logger)
         try:
-            self.modsRecord = self.metadata["mods"]
-        except AttributeError as e:
-            raise BadOAIRecord("No mods element found. ERROR: " + str(e))
-        self.resultRecord = self.mapFromMODS()
-        self.resultRecord = self.mapper.map(self)
+            self.resultRecord = self.mapper.map(self)
+        except Exception as e:
+            raise BadMODSRecord("Could not map MODS record.",e,self.logger)
+        self.reconcileRecord()
         return self.resultRecord
-
-    def mapFromMODS(self):
-        pass
+        
